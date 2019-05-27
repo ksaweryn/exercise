@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 public class GenericDao <T, I extends Serializable> {
 
 	@PersistenceContext(name = "ExercisePU")
-	private EntityManager em;
+	protected EntityManager em;
 	
 	public GenericDao() {
 	}

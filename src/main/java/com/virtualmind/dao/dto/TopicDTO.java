@@ -1,21 +1,23 @@
 package com.virtualmind.dao.dto;
 
+import java.util.List;
+
 import com.virtualmind.model.Post;
 
 public class TopicDTO {
 
 	Integer id;
 	String name;
-	Post post;
+	List<Post> posts;
 
 	public TopicDTO() {
 
 	}
 
-	public TopicDTO(Integer id, String name, Post post) {
+	public TopicDTO(Integer id, String name, List<Post> posts) {
 		this.id = id;
 		this.name = name;
-		this.post = post;
+		this.posts = posts;
 	}
 
 	public Integer getId() {
@@ -34,12 +36,12 @@ public class TopicDTO {
 		this.name = name;
 	}
 
-	public Post getPost() {
-		return post;
+	public List<Post> getPosts() {
+		return posts;
 	}
 
-	public void setPost(Post post) {
-		this.post = post;
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
 	}
 
 }
