@@ -10,7 +10,8 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DateBucket {
 	// Simplified for the example, should have getters at least for these fields
@@ -23,15 +24,23 @@ public class DateBucket {
 	}
 
 	public static void main(String... args) {
+
 		List<DateBucket> buckets = bucketize(
-				ZonedDateTime.of(LocalDate.of(1988, Month.MAY.getValue(), DayOfWeek.SUNDAY.getValue()),
+				ZonedDateTime.of(LocalDate.of(2017, Month.MAY.getValue(), DayOfWeek.SUNDAY.getValue()),
 						LocalTime.MIDNIGHT, ZoneId.systemDefault()),
-				ZonedDateTime.now(), 2, ChronoUnit.DAYS);
+				ZonedDateTime.now(), 10, ChronoUnit.DAYS);
+
+		List<DateBucket> buckets2 = bucketize8(
+				ZonedDateTime.of(LocalDate.of(2017, Month.MAY.getValue(), DayOfWeek.SUNDAY.getValue()),
+						LocalTime.MIDNIGHT, ZoneId.systemDefault()),
+				ZonedDateTime.now(), 10, ChronoUnit.DAYS);
+
 		System.out.println(buckets.size());
-		for (DateBucket bucket : buckets) {
-			System.out.println("TO " + bucket.to);
-			System.out.println("FROM " + bucket.from);
-		}
+		System.out.println(buckets2.size());
+		System.out.println(buckets.size() == buckets2.size());
+		System.out.println(
+				tamanioI(ZonedDateTime.of(LocalDate.of(2017, Month.MAY.getValue(), DayOfWeek.SUNDAY.getValue()),
+						LocalTime.MIDNIGHT, ZoneId.systemDefault()), ZonedDateTime.now(), 10, ChronoUnit.DAYS));
 
 	}
 
@@ -43,25 +52,33 @@ public class DateBucket {
 			ZonedDateTime minDate = fromDate.plus(i * bucketSize, bucketSizeUnit);
 			ZonedDateTime maxDate = fromDate.plus((i + 1) * bucketSize, bucketSizeUnit);
 			reachedDate = toDate.isBefore(maxDate);
+
 			buckets.add(new DateBucket(minDate.toInstant(), maxDate.toInstant()));
 		}
 
 		return buckets;
 	}
 
+	public static int tamanioI(ZonedDateTime fromDate, ZonedDateTime toDate, int bucketSize,
+			ChronoUnit bucketSizeUnit) {
+		boolean reachedDate = false;
+		int i = 0;
+		for (; !reachedDate; i++) {
+			ZonedDateTime maxDate = fromDate.plus((i + 1) * bucketSize, bucketSizeUnit);
+			reachedDate = toDate.isBefore(maxDate);
+		}
+		return i;
+	}
+
 	public static List<DateBucket> bucketize8(ZonedDateTime fromDate, ZonedDateTime toDate, int bucketSize,
 			ChronoUnit bucketSizeUnit) {
 		List<DateBucket> buckets = new ArrayList<>();
-		boolean reachedDate = false;
-		for (int i = 0; !reachedDate; i++) {
 
-		}
-		IntStream.iterate(0, i -> i + 1).limit(toDate.isBefore(ZonedDateTime.now())).forEach(i -> {
-			ZonedDateTime maxDate = fromDate.plus((i + 1) * bucketSize, bucketSizeUnit);
-			buckets.add(new DateBucket(fromDate.plus(i * bucketSize, bucketSizeUnit).toInstant(), maxDate.toInstant()));
-		})
-		
-		List<DateBucket> result = 
+		Stream<Integer> integers2 = Stream.iterate(0, i -> i + 1).limit(200);
+		integers2
+				.map(i -> new DateBucket(fromDate.plus(i * bucketSize, bucketSizeUnit).toInstant(),
+						fromDate.plus((i + 1) * bucketSize, bucketSizeUnit).toInstant()))
+				.collect(Collectors.toCollection(() -> buckets));
 
 		return buckets;
 	}
